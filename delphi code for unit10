@@ -1,0 +1,139 @@
+unit Unit10;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.BaseImageCollection,
+  Vcl.ImageCollection, Vcl.VirtualImage;
+
+type
+  TForm10 = class(TForm)
+    Shape1: TShape;
+    Shape2: TShape;
+    Shape3: TShape;
+    Shape4: TShape;
+    VirtualImage1: TVirtualImage;
+    VirtualImage2: TVirtualImage;
+    ImageCollection1: TImageCollection;
+    VirtualImage3: TVirtualImage;
+    VirtualImage4: TVirtualImage;
+    VirtualImage5: TVirtualImage;
+    VirtualImage6: TVirtualImage;
+    procedure Shape1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Shape1DragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+
+
+
+    procedure Shape1DragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure VirtualImage1DragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure VirtualImage1DragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+
+
+  private
+    { Private declarations }
+
+  public
+    { Public declarations }
+  end;
+
+var
+  Form10: TForm10;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TForm10.Shape1DragDrop(Sender, Source: TObject; X, Y: Integer);
+var
+  TempIndex: Integer;
+begin
+  if Source is TShape then
+  begin
+    TShape(Source).Left := X;
+    TShape(Source).Top := Y;
+  end;
+
+end;
+
+procedure TForm10.Shape1DragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+begin
+ Accept := True;
+end;
+
+procedure TForm10.Shape1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  TShape(Sender).BeginDrag(True);
+end;
+
+
+
+
+
+procedure TForm10.VirtualImage1DragDrop(Sender, Source: TObject; X, Y: Integer);
+
+var
+  SrcDrink, DstDrink: TVirtualImage;
+  TempIndex: Integer;
+
+begin
+
+  // 情况 1：把一杯饮品拖到了另一杯饮品上（合成 或 互换）
+  if (Source is TVirtualImage) and (Sender is TVirtualImage) and (Source <> Sender) then
+  begin
+    SrcDrink := TVirtualImage(Source);
+    DstDrink := TVirtualImage(Sender);
+
+    // 相同等级且还没到满级（4 = Whiskey） -> 合成升级！
+    if (SrcDrink.ImageIndex = DstDrink.ImageIndex) and (DstDrink.ImageIndex < 4) then
+    begin
+      DstDrink.ImageIndex := DstDrink.ImageIndex + 1;
+      SrcDrink.ImageIndex := 0; // 拖过来的那杯变回 0 级（柠檬茶）
+
+      // 合成出终极威士忌时的仪式感小弹窗
+      if DstDrink.ImageIndex = 4 then
+        ShowMessage('恭喜酿出终极爱尔兰威士忌！Sláinte！');
+    end
+    else
+    begin
+      // 不同等级 -> 互换位置/图标！
+      TempIndex := DstDrink.ImageIndex;
+      DstDrink.ImageIndex := SrcDrink.ImageIndex;
+      SrcDrink.ImageIndex := TempIndex;
+    end;
+  end
+  // 情况 2：把饮品拖到了 Form10 空白区域 -> 自由移动摆放位置
+  else if (Source is TControl) and (Sender = Form10) then
+  begin
+    TControl(Source).Left := X - (TControl(Source).Width div 2);
+    TControl(Source).Top := Y - (TControl(Source).Height div 2);
+  end;
+end;
+procedure TForm10.VirtualImage1DragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+begin
+  Accept:=(Source is TVirtualimage)and(Source <>Sender);
+end;
+
+end.
+
+procedure TForm10.VirtualImage1DragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+begin
+  Accept:= (Source is Tvirtualimage)and (Source <> Sender);
+end;
+
+procedure TForm10.VirtualImage1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if button=mbLeft then
+    (Sender as Tvirtualimage).BeginDrag(True);
+end;
+
+end.
