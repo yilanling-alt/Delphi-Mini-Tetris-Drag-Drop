@@ -49,8 +49,7 @@ implementation
 
 
 procedure TForm10.Shape1DragDrop(Sender, Source: TObject; X, Y: Integer);
-var
-  TempIndex: Integer;
+
 begin
   if Source is TShape then
   begin
@@ -80,7 +79,7 @@ procedure TForm10.VirtualImage1DragDrop(Sender, Source: TObject; X, Y: Integer);
 
 var
   SrcDrink, DstDrink: TVirtualImage;
-  TempIndex: Integer;
+
 
 begin
 
@@ -103,9 +102,9 @@ begin
     else
     begin
       // 不同等级 -> 互换位置/图标！
-      TempIndex := DstDrink.ImageIndex;
+
       DstDrink.ImageIndex := SrcDrink.ImageIndex;
-      SrcDrink.ImageIndex := TempIndex;
+
     end;
   end
   // 情况 2：把饮品拖到了 Form10 空白区域 -> 自由移动摆放位置
@@ -119,21 +118,6 @@ procedure TForm10.VirtualImage1DragOver(Sender, Source: TObject; X, Y: Integer;
   State: TDragState; var Accept: Boolean);
 begin
   Accept:=(Source is TVirtualimage)and(Source <>Sender);
-end;
-
-end.
-
-procedure TForm10.VirtualImage1DragOver(Sender, Source: TObject; X, Y: Integer;
-  State: TDragState; var Accept: Boolean);
-begin
-  Accept:= (Source is Tvirtualimage)and (Source <> Sender);
-end;
-
-procedure TForm10.VirtualImage1MouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  if button=mbLeft then
-    (Sender as Tvirtualimage).BeginDrag(True);
 end;
 
 end.
